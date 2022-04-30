@@ -1,0 +1,59 @@
+*rust-plug.txt* adding Rust to Vim.
+
+A framework for creating Vim plugins in Rust. ~
+
+Version: 0.0.1
+
+====================================================================
+CONTENTS                                                 *rust-plug*
+
+    1. Usage ..................................... |rust-plug-usage|
+    2. Options ................................. |rust-plug-options|
+    3. Commands ............................... |rust-plug-commands|
+    4. Functions ............................. |rust-plug-functions|
+    5. Contributing .............. |rust-plug-commands|
+    6. Changelog ............ |PotionChangelog|
+    7. Credits .............. |PotionCredits|
+
+
+====================================================================
+Section 1: Usage                                   *rust-plug-usage*
+
+A framework for creating Vim plugins in Rust.
+
+Add the plugin using `vim-plug`.
+
+_Refer to [rust-plug-poc](https://github.com/AceofSpades5757/rust-plug-poc) for an example._
+
+====================================================================
+Section 2: Options                               *rust-plug-options*
+
+*g:rustplug_max_startup_time* [seconds]
+    [seconds] to wait for plugin to startup (start the binary).
+
+*g:rustplug_max_work_time* [seconds]
+    [seconds] to allow the plugin to run (run the binary).
+
+====================================================================
+Section 3: Commands                             *rust-plug-commands*
+
+*RustPlugRun* [plugin]
+    Run Rust [plugin]. Will build if not already built. Will install if not already installed.
+
+*RustPlugInstall* [plugin]
+    Build and install Rust [plugin].
+
+*RustPlugRunBinary* [binary]
+    Run a specific [binary], given path.
+
+====================================================================
+Section 4: Functions                           *rust-plug-functions*
+
+*rustplug#run* [plugin]
+    Run Rust [plugin]. Will build if not already built. Will install if not already installed.
+*rustplug#install* [plugin]
+    Build and install Rust [plugin].
+*rustplug#run_binary* [binary]
+    Run a specific {binary}, given path.
+
+ vim:textwidth=78:tabstop=8:noexpandtab:filetype=help:norightleft:
