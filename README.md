@@ -22,6 +22,15 @@ Then install using `PlugInstall`. The posthook, `do`, will install the Rust plug
 
 # Usage
 
+Help
+
+`:help rust-plug.txt`
+
+Options
+
+* `g:rustplug_max_startup_time`: Seconds to wait for plugin to startup (start the binary).
+* `g:rustplug_max_work_time`: Seconds to allow the plugin to run (run the binary).
+
 Functions
 
 * `rustplug#run`: Run Rust plugin. Will build if not already built. Will install if not already installed.
