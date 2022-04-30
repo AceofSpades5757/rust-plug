@@ -6,11 +6,13 @@ A framework for creating Vim plugins in Rust.
 
 Add the plugin using `vim-plug`.
 
+_Refer to [rust-plug-poc](https://github.com/AceofSpades5757/rust-plug-poc) for an example._
+
 ``` vim
 Plug 'AceofSpades5757/rust-plug' |  " Requirement
-    \ Plug 'AceofSpades5757/vim-rust-plugin-poc',
+    \ Plug 'AceofSpades5757/rust-plug-poc',
         \ {
-            \ 'do': ':call rustplug#run(''AceofSpades5757/vim-rust-plugin-poc'')',
+            \ 'do': ':call rustplug#run(''AceofSpades5757/rust-plug-poc'')',
         \ }
 ```
 
