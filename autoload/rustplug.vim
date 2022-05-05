@@ -13,16 +13,7 @@ function! rustplug#run(plugin) abort
     py3 repo: str = vim.eval('a:plugin')
 
 python3 << EOF
-try:
-    import rustplug
-except ModuleNotFoundError:
-    # Allow access to Python directory immediately upon install of the plugin.
-    import sys
-    from pathlib import Path
-    plugin_project_dir: Path = Path(vim.eval("fnamemodify(resolve(expand('<sfile>:p')), ':h')")).parent  # rust-plug
-    pythonx_dir: Path = plugin_project_dir / 'pythonx'
-    sys.path.append(str(pythonx_dir))
-    import rustplug
+import rustplug
 from rustplug import Environment
 from rustplug import Plugin
 from rustplug import logger  # DEBUG - REMOVE THIS
