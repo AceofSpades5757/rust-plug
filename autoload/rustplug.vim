@@ -56,12 +56,24 @@ function! rustplug#run_binary(binary) abort
         let job_id = 0
         let job_options = {}
     endif
-    let job = job_start([a:binary], job_options)
+
+    " Try ports 8700 - 8799
+    let port = 8700
+    for i in range(100)
+
+        let job = job_start([a:binary, '--port', port], job_options)
+
+        if job_status(job) == 'fail'
+            let port += 1
+        else
+            break
+        endif
+    endfor
 
     " 2. Connect to Server
     " Needs time to wait for server startup
 
-    let ch_address = 'localhost:8765'
+    let ch_address = 'localhost:' . port
     let ch_options = {}
     let channel = ch_open(ch_address, ch_options)
 
