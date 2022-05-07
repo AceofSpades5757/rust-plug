@@ -64,6 +64,7 @@ function! rustplug#run_binary(binary) abort
         let env = environ()
         let env["VII_PLUGIN_PORT"] = port
         let job_options["env"] = env
+        let job_options["waittime"] = 500 " ms
         let job = job_start([a:binary], job_options)
 
         if job_status(job) == 'fail'
