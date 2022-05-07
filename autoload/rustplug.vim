@@ -45,13 +45,16 @@ function! rustplug#run_binary(binary) abort
     " 1. Start Server
     " 2. Connect to Server
     " 3. Do Work
-    " 4. Stop (Optional)
+    " 4. Stop (Optional) (Deprecated)
     "
+
+    echomsg "Running Binary: " . a:binary
 
     " Verify Arguments
     call rustplug#verify_binary(a:binary)
 
     " 1. Start Server
+    echomsg "Starting Server"
     if !exists('job_id')
         let job_id = 0
         let job_options = {}
@@ -65,10 +68,14 @@ function! rustplug#run_binary(binary) abort
         let env["VII_PLUGIN_PORT"] = port
         let job_options["env"] = env
         let job = job_start([a:binary], job_options)
+        let ch_address = 'localhost:' . port
+        let ch_options = {}
+        let ch_options['waittime'] = 100 "ms
+        let channel = ch_open(ch_address, ch_options)
 
         " Wait Time
         if job_status(job) == 'fail'
-            sleep 50m
+            sleep 80m
         endif
 
         if job_status(job) == 'fail'
@@ -81,28 +88,24 @@ function! rustplug#run_binary(binary) abort
     " 2. Connect to Server
     " Needs time to wait for server startup
 
+    echomsg "Connecting to Server"
+
     let ch_address = 'localhost:' . port
     let ch_options = {}
+    " 5 seconds
+    let ch_options['waittime'] = 5000 "ms
     let channel = ch_open(ch_address, ch_options)
 
-    let count_ = 0
-    while ch_status(channel) == "fail"
-
-        " Waiting to Connect
-        if count_ >= g:rustplug_max_startup_time
-            break
-        endif
-        let count_ += 1
-        sleep 1
-
-        " Try Again
-        let channel = ch_open(ch_address, ch_options)
-
-    endwhile
+    if ch_status(channel) == "fail"
+        echoerr "Failed to connect to channel."
+        throw "Failed to connect to channel for " . a:binary
+    endif
 
     " 3. Work
     "
     " Should have a set timer to run.
+
+    echomsg "Running Server"
 
     let count_ = 0
     while ch_status(channel) == "open"

@@ -4,6 +4,7 @@ import logging
 import platform
 import subprocess
 from pathlib import Path
+from typing import Callable
 from typing import Final
 from typing import Iterable
 from typing import Optional
@@ -126,7 +127,10 @@ class Plugin:
         for binary in self.binaries:
             readable: str = binary.as_posix()
             logger.info(f'Running binary (readable): {readable}')
-            vim.command(f'call {RUN_BINARY_VIM_FUNCTION}("{readable}")')
+
+            # vim.command(f'call {RUN_BINARY_VIM_FUNCTION}("{readable}")')
+            run_binary: Callable = vim.bindeval("function('rustplug#run')")
+            run_binary('AceofSpades5757/rust-plug-poc')
 
 
 class Environment:
