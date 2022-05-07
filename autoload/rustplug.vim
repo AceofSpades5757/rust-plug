@@ -53,53 +53,56 @@ function! rustplug#run_binary(binary) abort
     " Verify Arguments
     call rustplug#verify_binary(a:binary)
 
-    " 1. Start Server
-    echomsg "Starting Server"
-    if !exists('job_id')
-        let job_id = 0
-        let job_options = {}
-    endif
-
     " Try ports 8700 - 8799
     let port = 8700
     for i in range(100)
 
+        echomsg "Trying port: " . port
+
+        " 1. Start Server
+        echomsg "Starting Server"
+
         let env = environ()
         let env["VII_PLUGIN_PORT"] = port
+        let job_options = {}
         let job_options["env"] = env
         let job = job_start([a:binary], job_options)
+
+        if job_status(job) == 'fail'
+            echomsg "Job Failed"
+            let port += 1
+            continue
+        else
+            echomsg "Job Succeeded"
+        endif
+
+        " 2. Connect to Server
+        " Needs time to wait for server startup
+
         let ch_address = 'localhost:' . port
+        "let ch_address = '127.0.0.1:' . port
         let ch_options = {}
         let ch_options['waittime'] = 100 "ms
         let channel = ch_open(ch_address, ch_options)
 
-        " Wait Time
-        if job_status(job) == 'fail'
-            sleep 80m
-        endif
+        if ch_status(channel) == "fail"
 
-        if job_status(job) == 'fail'
+            " End Job, just in case
+            call job_stop(job)
+
+            echomsg "Channel Failed"
             let port += 1
+            continue
+
+            " Throw Error
+            echoerr "Failed to connect to channel."
+            throw "Failed to connect to channel for " . a:binary
         else
+            echomsg "Channel Succeeded"
             break
         endif
+
     endfor
-
-    " 2. Connect to Server
-    " Needs time to wait for server startup
-
-    echomsg "Connecting to Server"
-
-    let ch_address = 'localhost:' . port
-    let ch_options = {}
-    " 5 seconds
-    let ch_options['waittime'] = 5000 "ms
-    let channel = ch_open(ch_address, ch_options)
-
-    if ch_status(channel) == "fail"
-        echoerr "Failed to connect to channel."
-        throw "Failed to connect to channel for " . a:binary
-    endif
 
     " 3. Work
     "
