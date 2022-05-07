@@ -7,6 +7,13 @@
 "     Vim plugin framework for Rust.
 "
 
+function! rustplug#loginfo(message) abort
+    "echomsg a:message
+endfunction
+function! rustplug#logerr(message) abort
+    "echoerr a:message
+endfunction
+
 function! rustplug#run(plugin) abort
 
     " To keep it simple, keeping plugin as a repo string
@@ -48,7 +55,7 @@ function! rustplug#run_binary(binary) abort
     " 4. Stop (Optional) (Deprecated)
     "
 
-    echomsg "Running Binary: " . a:binary
+    call rustplug#loginfo("Running Binary: " . a:binary)
 
     " Verify Arguments
     call rustplug#verify_binary(a:binary)
@@ -57,10 +64,10 @@ function! rustplug#run_binary(binary) abort
     let port = 8700
     for i in range(100)
 
-        echomsg "Trying port: " . port
+        call rustplug#loginfo("Trying port: " . port)
 
         " 1. Start Server
-        echomsg "Starting Server"
+        call rustplug#loginfo("Starting Server")
 
         let env = environ()
         let env["VII_PLUGIN_PORT"] = port
@@ -69,11 +76,11 @@ function! rustplug#run_binary(binary) abort
         let job = job_start([a:binary], job_options)
 
         if job_status(job) == 'fail'
-            echomsg "Job Failed"
+            call rustplug#loginfo("Job Failed")
             let port += 1
             continue
         else
-            echomsg "Job Succeeded"
+            call rustplug#loginfo("Job Succeeded")
         endif
 
         " 2. Connect to Server
@@ -90,15 +97,15 @@ function! rustplug#run_binary(binary) abort
             " End Job, just in case
             call job_stop(job)
 
-            echomsg "Channel Failed"
+            call rustplug#loginfo("Channel Failed")
             let port += 1
             continue
 
             " Throw Error
-            echoerr "Failed to connect to channel."
+            call rustplug#logerr("Failed to connect to channel.")
             throw "Failed to connect to channel for " . a:binary
         else
-            echomsg "Channel Succeeded"
+            call rustplug#loginfo("Channel Succeeded")
             break
         endif
 
@@ -108,7 +115,7 @@ function! rustplug#run_binary(binary) abort
     "
     " Should have a set timer to run.
 
-    echomsg "Running Server"
+    call rustplug#loginfo("Running Server")
 
     let count_ = 0
     while ch_status(channel) == "open"
