@@ -61,7 +61,10 @@ function! rustplug#run_binary(binary) abort
     let port = 8700
     for i in range(100)
 
-        let job = job_start([a:binary, '--port', port], job_options)
+        let env = environ()
+        let env["VII_PLUGIN_PORT"] = port
+        let job_options["env"] = env
+        let job = job_start([a:binary], job_options)
 
         if job_status(job) == 'fail'
             let port += 1
