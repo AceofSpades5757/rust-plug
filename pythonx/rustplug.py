@@ -4,7 +4,6 @@ import logging
 import platform
 import subprocess
 from pathlib import Path
-from typing import Callable
 from typing import Final
 from typing import Iterable
 from typing import Optional
