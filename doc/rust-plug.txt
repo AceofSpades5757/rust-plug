@@ -2,7 +2,7 @@
 
 A framework for creating Vim plugins in Rust. ~
 
-Version: 0.0.1
+Version: 0.0.5
 
 ====================================================================
 CONTENTS                                                 *rust-plug*

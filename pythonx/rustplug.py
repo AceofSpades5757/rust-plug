@@ -126,10 +126,15 @@ class Plugin:
         for binary in self.binaries:
             readable: str = binary.as_posix()
             logger.info(f'Running binary (readable): {readable}')
+
             vim.command(f'call {RUN_BINARY_VIM_FUNCTION}("{readable}")')
+            # run_binary: Callable = vim.bindeval("function('rustplug#run')")
+            # run_binary('AceofSpades5757/rust-plug-poc')
 
 
 class Environment:
+    """ Rust-Plug Vim Plugin Environment """
+
     def __init__(self, plugin_name: str):
 
         logger.info(f'Init Environment - plugin_name={plugin_name}')

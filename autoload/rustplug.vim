@@ -7,6 +7,31 @@
 "     Vim plugin framework for Rust.
 "
 
+function! rustplug#loginfo(message) abort
+    "echomsg a:message
+endfunction
+function! rustplug#logerr(message) abort
+    "echoerr a:message
+endfunction
+
+function! rustplug#runall(ctx = {}) abort
+python3 << EOF
+""" Run all binaries in our rustplug directory. """
+import rustplug
+from rustplug import Environment
+from rustplug import Plugin
+
+
+rust_bin_dir: Path = Environment('').rust_bin_dir
+plugin_path: Path
+for plugin_path in rust_bin_dir.glob('*'):
+    env: Environment = Environment(plugin_path.name)
+    plugin: Plugin = env.plugin
+
+    plugin.run()
+EOF
+endfunction
+
 function! rustplug#run(plugin) abort
 
     " To keep it simple, keeping plugin as a repo string
@@ -16,7 +41,7 @@ python3 << EOF
 import rustplug
 from rustplug import Environment
 from rustplug import Plugin
-from rustplug import logger  # DEBUG - REMOVE THIS
+from rustplug import logger
 
 
 plugin_name: str = repo.rsplit('/', 1)[-1]
@@ -45,44 +70,70 @@ function! rustplug#run_binary(binary) abort
     " 1. Start Server
     " 2. Connect to Server
     " 3. Do Work
-    " 4. Stop (Optional)
+    " 4. Stop (Optional) (Deprecated)
     "
+
+    call rustplug#loginfo("Running Binary: " . a:binary)
 
     " Verify Arguments
     call rustplug#verify_binary(a:binary)
 
-    " 1. Start Server
-    if !exists('job_id')
-        let job_id = 0
+    " Try ports 8700 - 8799
+    let port = 8700
+    for i in range(100)
+
+        call rustplug#loginfo("Trying port: " . port)
+
+        " 1. Start Server
+        call rustplug#loginfo("Starting Server")
+
+        let env = environ()
+        let env["VII_PLUGIN_PORT"] = port
         let job_options = {}
-    endif
-    let job = job_start([a:binary], job_options)
+        let job_options["env"] = env
+        let job = job_start([a:binary], job_options)
 
-    " 2. Connect to Server
-    " Needs time to wait for server startup
-
-    let ch_address = 'localhost:8765'
-    let ch_options = {}
-    let channel = ch_open(ch_address, ch_options)
-
-    let count_ = 0
-    while ch_status(channel) == "fail"
-
-        " Waiting to Connect
-        if count_ >= g:rustplug_max_startup_time
-            break
+        if job_status(job) == 'fail'
+            call rustplug#loginfo("Job Failed")
+            let port += 1
+            continue
+        else
+            call rustplug#loginfo("Job Succeeded")
         endif
-        let count_ += 1
-        sleep 1
 
-        " Try Again
+        " 2. Connect to Server
+        " Needs time to wait for server startup
+
+        let ch_address = 'localhost:' . port
+        "let ch_address = '127.0.0.1:' . port
+        let ch_options = {}
+        let ch_options['waittime'] = 100 "ms
         let channel = ch_open(ch_address, ch_options)
 
-    endwhile
+        if ch_status(channel) == "fail"
+
+            " End Job, just in case
+            call job_stop(job)
+
+            call rustplug#loginfo("Channel Failed")
+            let port += 1
+            continue
+
+            " Throw Error
+            call rustplug#logerr("Failed to connect to channel.")
+            throw "Failed to connect to channel for " . a:binary
+        else
+            call rustplug#loginfo("Channel Succeeded")
+            break
+        endif
+
+    endfor
 
     " 3. Work
     "
     " Should have a set timer to run.
+
+    call rustplug#loginfo("Running Server")
 
     let count_ = 0
     while ch_status(channel) == "open"
