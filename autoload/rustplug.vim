@@ -14,7 +14,7 @@ function! rustplug#logerr(message) abort
     "echoerr a:message
 endfunction
 
-function! rustplug#run(plugin) abort
+function! rustplug#runall(plugin) abort
 python3 << EOF
 """ Run all binaries in our rustplug directory. """
 import rustplug
