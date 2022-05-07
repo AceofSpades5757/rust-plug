@@ -15,6 +15,24 @@ function! rustplug#logerr(message) abort
 endfunction
 
 function! rustplug#run(plugin) abort
+python3 << EOF
+""" Run all binaries in our rustplug directory. """
+import rustplug
+from rustplug import Environment
+from rustplug import Plugin
+
+
+rust_bin_dir: Path = Environment('').rust_bin_dir
+plugin_path: Path
+for plugin_path in rust_bin_dir.glob('*'):
+    env: Environment = Environment(plugin_path.name)
+    plugin: Plugin = env.plugin
+
+    plugin.run()
+EOF
+endfunction
+
+function! rustplug#run(plugin) abort
 
     " To keep it simple, keeping plugin as a repo string
     py3 repo: str = vim.eval('a:plugin')
@@ -23,7 +41,7 @@ python3 << EOF
 import rustplug
 from rustplug import Environment
 from rustplug import Plugin
-from rustplug import logger  # DEBUG - REMOVE THIS
+from rustplug import logger
 
 
 plugin_name: str = repo.rsplit('/', 1)[-1]

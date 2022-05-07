@@ -133,6 +133,8 @@ class Plugin:
 
 
 class Environment:
+    """ Rust-Plug Vim Plugin Environment """
+
     def __init__(self, plugin_name: str):
 
         logger.info(f'Init Environment - plugin_name={plugin_name}')
