@@ -42,7 +42,7 @@ RUN_BINARY_VIM_FUNCTION: Final[str] = 'rustplug#run_binary'
 
 
 class Plugin:
-    """ Represents a Rust Plugin. """
+    """Represents a Rust Plugin."""
 
     def __init__(self, name: str, env: Environment = None):
 
@@ -60,7 +60,7 @@ class Plugin:
         return self.env.vim_plug / self.name  # type: ignore
 
     def build(self) -> None:
-        """ Build plugin to create binaries. """
+        """Build plugin to create binaries."""
 
         logger.info(f'Building: {self.name}')  # DEBUG REMOVE
         logger.info(f'Building: {self.directory}')
@@ -76,7 +76,7 @@ class Plugin:
 
     @property
     def built(self) -> bool:
-        """ Was this already built?
+        """Was this already built?
 
         If self.install was run then it should have generated binaries.
         """
@@ -85,7 +85,7 @@ class Plugin:
 
     @property
     def installed(self) -> bool:
-        """ Was this already installed?
+        """Was this already installed?
 
         If self.install was run then it should have generated binaries.
         """
@@ -133,7 +133,7 @@ class Plugin:
 
 
 class Environment:
-    """ Rust-Plug Vim Plugin Environment """
+    """Rust-Plug Vim Plugin Environment"""
 
     def __init__(self, plugin_name: str):
 
@@ -144,11 +144,14 @@ class Environment:
     def vimfiles(self) -> Path:
         if platform.system() == 'Linux':
             return Path.home() / '.vim'
-        elif platform.system() == 'Windows':
+        elif (
+            platform.system() == 'Windows'
+            or platform.system().upper().startswith("MSYS")
+        ):
             return Path.home() / 'vimfiles'
         else:
             raise NotImplementedError(
-                "Platform {platform.system()} not supported."
+                f"Platform {platform.system()} not supported."
             )
 
     @property
@@ -157,7 +160,7 @@ class Environment:
 
     @property
     def vim_plug(self) -> Path:
-        """ Vim-Plug directory """
+        """Vim-Plug directory"""
         return self.vimfiles / 'plugged'
 
 
@@ -184,7 +187,10 @@ class TestEnvironment(unittest.TestCase):
 
         if platform.system() == 'Linux':
             self.assertEqual(env.vimfiles, Path.home() / '.vim')
-        elif platform.system() == 'Windows':
+        elif (
+            platform.system() == 'Windows'
+            or platform.system().upper().startswith("MSYS")
+        ):
             self.assertEqual(env.vimfiles, Path.home() / 'vimfiles')
 
         self.assertEqual(
@@ -193,7 +199,10 @@ class TestEnvironment(unittest.TestCase):
         )
         if platform.system() == 'Linux':
             self.assertEqual(env.vim_plug, Path.home() / '.vim/plugged')
-        elif platform.system() == 'Windows':
+        elif (
+            platform.system() == 'Windows'
+            or platform.system().upper().startswith("MSYS")
+        ):
             self.assertEqual(env.vim_plug, Path.home() / 'vimfiles/plugged')
 
 
