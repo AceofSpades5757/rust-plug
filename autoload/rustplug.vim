@@ -1,12 +1,3 @@
-" Plugin:      rust-plug
-" Author:      Kyle L. Davis <AceofSpades5757.github@gmail.com>
-" Version:     0.1.0
-" Modified:    2022 Apr 30
-" Description:
-"
-"     Vim plugin framework for Rust.
-"
-
 function! rustplug#loginfo(message) abort
     "echomsg a:message
 endfunction
