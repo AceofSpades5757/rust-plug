@@ -17,6 +17,8 @@ endfunction
 function! rustplug#runall(ctx = {}) abort
 python3 << EOF
 """ Run all binaries in our rustplug directory. """
+from pathlib import Path
+
 import rustplug
 from rustplug import Environment
 from rustplug import Plugin
@@ -161,6 +163,8 @@ function! rustplug#install(repo, ...) abort
 py3 repo = vim.eval('a:repo')
 
 python3 << EOF
+from pathlib import Path
+
 import rustplug
 from rustplug import Environment
 from rustplug import Plugin
