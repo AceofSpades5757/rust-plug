@@ -2,7 +2,7 @@
 
 A framework for creating Vim plugins in Rust. ~
 
-Version: 0.0.6
+Version: 0.0.7
 
 ====================================================================
 CONTENTS                                                 *rust-plug*
@@ -11,9 +11,6 @@ CONTENTS                                                 *rust-plug*
     2. Options ................................. |rust-plug-options|
     3. Commands ............................... |rust-plug-commands|
     4. Functions ............................. |rust-plug-functions|
-    5. Contributing .............. |rust-plug-commands|
-    6. Changelog ............ |PotionChangelog|
-    7. Credits .............. |PotionCredits|
 
 
 ====================================================================
