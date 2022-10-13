@@ -22,13 +22,7 @@ Plug 'AceofSpades5757/rust-plug-poc',
 
 Then install using `PlugInstall`. The posthook, `do`, will install the Rust plugin, and run it.
 
-## Git Ignore
-
-It may be a good idea to add the following line to your Vim's runtime .gitignore, if you use git to manage them.
-
-`rustplug/*`
-
-This is the directory where the plugin binaries are stored.
+Uses `rustplug/*`, in your `.vim` or `vimfiles` directory to manage plugins.
 
 # Usage
 
