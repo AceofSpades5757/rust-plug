@@ -18,9 +18,7 @@ Plug 'AceofSpades5757/rust-plug-poc',
     \ }
 ```
 
-**_WARNING: Need to run `PlugInstall` twice to allow the Python runtime path to update._**
-
-Then install using `PlugInstall`. The posthook, `do`, will install the Rust plugin, and run it.
+Then install using `PlugInstall`. The posthook, `do`, will install the Rust plugin.
 
 Uses `rustplug/*`, in your `.vim` or `vimfiles` directory to manage plugins.
 
