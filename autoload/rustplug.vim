@@ -1,8 +1,6 @@
-function! rustplug#loginfo(message) abort
-    "echomsg a:message
+function! rustplug#log#info(message) abort
 endfunction
-function! rustplug#logerr(message) abort
-    "echoerr a:message
+function! rustplug#log#error(message) abort
 endfunction
 
 function! rustplug#runall(ctx = {}) abort
@@ -66,7 +64,7 @@ function! rustplug#run_binary(binary) abort
     " 4. Stop (Optional) (Deprecated)
     "
 
-    call rustplug#loginfo("Running Binary: " . a:binary)
+    call rustplug#log#info("Running Binary: " . a:binary)
 
     " Verify Arguments
     call rustplug#verify_binary(a:binary)
@@ -75,10 +73,10 @@ function! rustplug#run_binary(binary) abort
     let port = 8700
     for i in range(100)
 
-        call rustplug#loginfo("Trying port: " . port)
+        call rustplug#log#info("Trying port: " . port)
 
         " 1. Start Server
-        call rustplug#loginfo("Starting Server")
+        call rustplug#log#info("Starting Server")
 
         let env = environ()
         let env["VII_PLUGIN_PORT"] = port
@@ -87,36 +85,31 @@ function! rustplug#run_binary(binary) abort
         let job = job_start([a:binary], job_options)
 
         if job_status(job) == 'fail'
-            call rustplug#loginfo("Job Failed")
+            call rustplug#log#info("Job Failed")
             let port += 1
             continue
         else
-            call rustplug#loginfo("Job Succeeded")
+            call rustplug#log#info("Job Succeeded")
         endif
 
         " 2. Connect to Server
         " Needs time to wait for server startup
 
         let ch_address = 'localhost:' . port
-        "let ch_address = '127.0.0.1:' . port
         let ch_options = {}
         let ch_options['waittime'] = 100 "ms
         let channel = ch_open(ch_address, ch_options)
 
         if ch_status(channel) == "fail"
 
-            " End Job, just in case
+            " Clean Up Job
             call job_stop(job)
 
-            call rustplug#loginfo("Channel Failed")
+            call rustplug#log#info("Channel Failed")
             let port += 1
             continue
-
-            " Throw Error
-            call rustplug#logerr("Failed to connect to channel.")
-            throw "Failed to connect to channel for " . a:binary
         else
-            call rustplug#loginfo("Channel Succeeded")
+            call rustplug#log#info("Channel Succeeded")
             break
         endif
 
@@ -126,7 +119,7 @@ function! rustplug#run_binary(binary) abort
     "
     " Should have a set timer to run.
 
-    call rustplug#loginfo("Running Server")
+    call rustplug#log#info("Running Server")
 
     let count_ = 0
     while ch_status(channel) == "open"
