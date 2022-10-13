@@ -1,8 +1,3 @@
-function! rustplug#log#info(message) abort
-endfunction
-function! rustplug#log#error(message) abort
-endfunction
-
 function! rustplug#runall(ctx = {}) abort
 python3 << EOF
 """ Run all binaries in our rustplug directory. """
