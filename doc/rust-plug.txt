@@ -2,7 +2,7 @@
 
 A framework for creating Vim plugins in Rust. ~
 
-Version: 0.0.7
+Version: 0.0.8
 
 ====================================================================
 CONTENTS                                                 *rust-plug*
@@ -24,9 +24,6 @@ _Refer to [rust-plug-poc](https://github.com/AceofSpades5757/rust-plug-poc) for 
 
 ====================================================================
 Section 2: Options                               *rust-plug-options*
-
-*g:rustplug_max_startup_time* [seconds]
-    [seconds] to wait for plugin to startup (start the binary).
 
 *g:rustplug_max_work_time* [seconds]
     [seconds] to allow the plugin to run (run the binary).

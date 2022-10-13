@@ -3,24 +3,25 @@ from __future__ import annotations
 import logging
 import platform
 import subprocess
+import unittest
 from pathlib import Path
 from typing import Final
 from typing import Iterable
 from typing import Optional
 
 
-log_dir: Path = Path(__file__).parent / 'logs'
+log_dir: Path = Path(__file__).parent / "logs"
 log_dir.mkdir(exist_ok=True)
-log_file: Path = log_dir / Path(__file__).with_suffix('.log').name
+log_file: Path = log_dir / Path(__file__).with_suffix(".log").name
 
 logging.getLogger().setLevel(logging.DEBUG)  # ROOT Logger
 logger = logging.getLogger(__name__)
 
 # Formatter
-date_format = '%Y-%m-%dT%H:%M:%S%z'
-message_format = '{asctime} - {name} - {levelname:<8} - {message}'
+date_format = "%Y-%m-%dT%H:%M:%S%z"
+message_format = "{asctime} - {name} - {levelname:<8} - {message}"
 formatter = logging.Formatter(
-    datefmt=date_format, style='{', fmt=message_format, validate=True
+    datefmt=date_format, style="{", fmt=message_format, validate=True
 )
 
 # Stream Handler
@@ -38,7 +39,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-RUN_BINARY_VIM_FUNCTION: Final[str] = 'rustplug#run_binary'
+RUN_BINARY_VIM_FUNCTION: Final[str] = "rustplug#run_binary"
 
 
 class Plugin:
@@ -46,7 +47,7 @@ class Plugin:
 
     def __init__(self, name: str, env: Environment = None):
 
-        logger.info(f'Init Plugin - name={name}')
+        logger.info(f"Init Plugin - name={name}")
         self.name: str = name
         self.env: Optional[Environment] = env
 
@@ -56,16 +57,16 @@ class Plugin:
     @property
     def directory(self) -> Path:
         if self.env is None:
-            raise ValueError('Environment required to run this method.')
+            raise ValueError("Environment required to run this method.")
         return self.env.vim_plug / self.name  # type: ignore
 
     def build(self) -> None:
         """Build plugin to create binaries."""
 
-        logger.info(f'Building: {self.name}')  # DEBUG REMOVE
-        logger.info(f'Building: {self.directory}')
+        logger.info(f"Building: {self.name}")  # DEBUG REMOVE
+        logger.info(f"Building: {self.directory}")
         process = subprocess.run(
-            'cargo build --release'.split(),
+            "cargo build --release".split(),
             cwd=self.directory,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -80,7 +81,7 @@ class Plugin:
 
         If self.install was run then it should have generated binaries.
         """
-        binaries = self.directory.glob('target/release/*.exe')
+        binaries = self.directory.glob("target/release/*.exe")
         return bool(list(binaries))
 
     @property
@@ -95,41 +96,39 @@ class Plugin:
         """Install binaries created."""
 
         if self.env is None:
-            raise ValueError('Environment required to run this method.')
+            raise ValueError("Environment required to run this method.")
 
         import shutil
 
-        binaries = self.directory.glob('target/release/*.exe')
-        logger.info(f'Installing: {binaries}')
+        binaries = self.directory.glob("target/release/*.exe")
+        logger.info(f"Installing: {binaries}")
         for binary in binaries:
-            logger.info(f'Installing Binary: {binary} to {self.bin_directory}')
+            logger.info(f"Installing Binary: {binary} to {self.bin_directory}")
             shutil.copy2(binary, self.bin_directory)  # type: ignore
 
     @property
     def bin_directory(self) -> Path:
 
         if self.env is None:
-            raise ValueError('Environment required to run this method.')
+            raise ValueError("Environment required to run this method.")
 
         return self.env.rust_bin_dir / self.name  # type: ignore
 
     @property
     def binaries(self) -> Iterable[Path]:
-        return self.bin_directory.glob('*.exe')
+        return self.bin_directory.glob("*.exe")
 
     def run(self) -> None:
         try:
             import vim  # type: ignore
         except ImportError:
-            raise RuntimeError('This method is only available inside Vim.')
+            raise RuntimeError("This method is only available inside Vim.")
 
         for binary in self.binaries:
             readable: str = binary.as_posix()
-            logger.info(f'Running binary (readable): {readable}')
+            logger.info(f"Running binary (readable): {readable}")
 
             vim.command(f'call {RUN_BINARY_VIM_FUNCTION}("{readable}")')
-            # run_binary: Callable = vim.bindeval("function('rustplug#run')")
-            # run_binary('AceofSpades5757/rust-plug-poc')
 
 
 class Environment:
@@ -137,18 +136,18 @@ class Environment:
 
     def __init__(self, plugin_name: str):
 
-        logger.info(f'Init Environment - plugin_name={plugin_name}')
+        logger.info(f"Init Environment - plugin_name={plugin_name}")
         self.plugin: Plugin = Plugin(name=plugin_name, env=self)
 
     @property
     def vimfiles(self) -> Path:
-        if platform.system() == 'Linux':
-            return Path.home() / '.vim'
+        if platform.system() == "Linux":
+            return Path.home() / ".vim"
         elif (
-            platform.system() == 'Windows'
+            platform.system() == "Windows"
             or platform.system().upper().startswith("MSYS")
         ):
-            return Path.home() / 'vimfiles'
+            return Path.home() / "vimfiles"
         else:
             raise NotImplementedError(
                 f"Platform {platform.system()} not supported."
@@ -156,55 +155,52 @@ class Environment:
 
     @property
     def rust_bin_dir(self) -> Path:
-        return self.vimfiles / 'rustplug'
+        return self.vimfiles / "rustplug"
 
     @property
     def vim_plug(self) -> Path:
         """Vim-Plug directory"""
-        return self.vimfiles / 'plugged'
-
-
-import unittest
+        return self.vimfiles / "plugged"
 
 
 class TestPlugin(unittest.TestCase):
     def test_simple(self) -> None:
 
-        plugin = Plugin(name='my_plugin')
+        plugin = Plugin(name="my_plugin")
 
-        self.assertEqual(plugin.name, 'my_plugin')
+        self.assertEqual(plugin.name, "my_plugin")
         self.assertIsNone(plugin.env)
 
         with self.assertRaises(Exception):
-            self.assertEqual(plugin.directory, 'my_plugin')
+            self.assertEqual(plugin.directory, "my_plugin")
 
 
 class TestEnvironment(unittest.TestCase):
     def test_simple(self) -> None:
 
-        plugin_name = 'my_plugin_with_env'
+        plugin_name = "my_plugin_with_env"
         env = Environment(plugin_name=plugin_name)
 
-        if platform.system() == 'Linux':
-            self.assertEqual(env.vimfiles, Path.home() / '.vim')
+        if platform.system() == "Linux":
+            self.assertEqual(env.vimfiles, Path.home() / ".vim")
         elif (
-            platform.system() == 'Windows'
+            platform.system() == "Windows"
             or platform.system().upper().startswith("MSYS")
         ):
-            self.assertEqual(env.vimfiles, Path.home() / 'vimfiles')
+            self.assertEqual(env.vimfiles, Path.home() / "vimfiles")
 
         self.assertEqual(
             env.plugin.directory,
-            Path.home() / 'vimfiles/plugged' / plugin_name,
+            Path.home() / "vimfiles/plugged" / plugin_name,
         )
-        if platform.system() == 'Linux':
-            self.assertEqual(env.vim_plug, Path.home() / '.vim/plugged')
+        if platform.system() == "Linux":
+            self.assertEqual(env.vim_plug, Path.home() / ".vim/plugged")
         elif (
-            platform.system() == 'Windows'
+            platform.system() == "Windows"
             or platform.system().upper().startswith("MSYS")
         ):
-            self.assertEqual(env.vim_plug, Path.home() / 'vimfiles/plugged')
+            self.assertEqual(env.vim_plug, Path.home() / "vimfiles/plugged")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
