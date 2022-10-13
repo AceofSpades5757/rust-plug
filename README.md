@@ -9,11 +9,13 @@ Add the plugin using `vim-plug`.
 _Refer to [rust-plug-poc](https://github.com/AceofSpades5757/rust-plug-poc) for an example._
 
 ```vim
-Plug 'AceofSpades5757/rust-plug' |  " Requirement
-    \ Plug 'AceofSpades5757/rust-plug-poc',
-        \ {
-            \ 'do': ':call rustplug#run(''AceofSpades5757/rust-plug-poc'')',
-        \ }
+" Framework allowing Vim plugins written in Rust
+Plug 'AceofSpades5757/rust-plug'
+" Plugin Written in Rust
+Plug 'AceofSpades5757/rust-plug-poc',
+    \ {
+        \ 'do': ':call rustplug#install(''AceofSpades5757/rust-plug-poc'')',
+    \ }
 ```
 
 **_WARNING: Need to run `PlugInstall` twice to allow the Python runtime path to update._**
